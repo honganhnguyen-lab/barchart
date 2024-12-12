@@ -12,7 +12,10 @@ class BarChart extends Panel
 
        /**
        SER515 #1: Design By Contract - what is the assumed precondition
-       of the Vectors in use in the for loop? Add a check to avoid any errors.
+       of the Vectors in use in the for loop?
+		-> all value need to have data, can not be nullable
+		-> all vectors need to be in same size with each other
+		Add a check to avoid any errors.
        Design an approach to gracefully handle any errors
        */
 	public void paint(Graphics g)
