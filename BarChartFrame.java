@@ -73,8 +73,7 @@ class BarChartFrame extends Frame
 		try (BufferedReader reader = new BufferedReader(new FileReader(fname))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				String[] parts = line.split(",");
-
+				String[] parts = line.trim().split("\\s+");
 				if (parts.length != 3) {
 					System.err.println("Invalid data format: " + line);
 					continue;
