@@ -17,6 +17,16 @@ class BarChart extends Panel
        */
 	public void paint(Graphics g)
 	{
+		if (data == null || dataLabels == null || dataColors == null) {
+			System.err.println("Error: Data Vectors are not initialized");
+			return;
+		}
+
+		if (data.size() != dataLabels.size() || data.size() != dataColors.size()) {
+			System.err.println("Error: One or more data Vectors are empty");
+			return;
+		}
+
 		setSize(200,250);
 		Image duke = Toolkit.getDefaultToolkit().getImage("duke2.gif");
 		g.drawImage(duke, 80, 10, this);
@@ -25,28 +35,35 @@ class BarChart extends Panel
 		{				  
 			int yposition = 100+i*barWidth;
 
-			g.setColor(dataColors.elementAt(i));
+			Color color = dataColors.elementAt(i);
+			Integer value = data.elementAt(i);
+			String label = dataLabels.elementAt(i);
 
-			int barLength = (data.elementAt(i)).intValue();
-			g.fillOval(100, yposition, barLength, barWidth);
+			if(color != null) {
+				g.setColor(dataColors.elementAt(i));
+				int barLength = (value != null) ? value.intValue() : 0;
+				g.fillOval(100, yposition, barLength, barWidth);
+			}
 
-			g.setColor(Color.black);
-			g.drawString(dataLabels.elementAt(i), 20, yposition+10);
+			if (label != null) {
+				g.setColor(Color.black);
+				g.drawString(label, 20, yposition + 10);
+			}
 		}
 	}
 
 	public void setData(Vector<Integer> dataValues)
 	{
-		data = dataValues;
+		data = dataValues != null ? dataValues : new Vector<>();
 	}
 
 	public void setLabels(Vector<String> labels)
 	{
-		dataLabels = labels;
+		dataLabels = labels != null ? labels : new Vector<>();
 	}
 
 	public void setColors(Vector<Color> colors)
 	{
-		dataColors = colors;
+		dataColors = colors != null ? colors : new Vector<>();
 	}
 }
