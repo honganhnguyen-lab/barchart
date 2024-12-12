@@ -23,13 +23,21 @@ class BarChartFrame extends Frame
 	{
 		// SER515 #2: The line which adds an element to the colors vector
 		// assumes the selected item is available in the colorMap. Is this always true?
+		// -> selectedColor always not null but chosenColor could be nullable, so we need to check it
 		public void actionPerformed(ActionEvent e)
 		{
 			if (e.getSource() instanceof Button)
 			{
+				String selectedColor = colorSelect.getSelectedItem();
+				Color chosenColor = colorMap.get(selectedColor);
+
+				if (chosenColor == null) {
+					System.err.println("Warning: no such color, use default");
+					chosenColor = Color.BLACK;
+				}
 				labels.addElement(labelSelect.getText());
 				data.addElement(new Integer(dataSelect.getText()));
-				colors.addElement(colorMap.get(colorSelect.getSelectedItem()));
+				colors.addElement(chosenColor);
 
 				chart.setData(data);
 				chart.setColors(colors);
