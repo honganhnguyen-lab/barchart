@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 import java.util.Hashtable;
 
@@ -58,6 +60,7 @@ class BarChartFrame extends Frame
 		labels = new Vector<String>();
 		colors = new Vector<Color>();
 
+		Map<String, Color> colorMap = new HashMap<>();
 		colorMap.put("red", Color.red);
 		colorMap.put("green", Color.green);
 		colorMap.put("blue", Color.blue);
@@ -67,23 +70,38 @@ class BarChartFrame extends Frame
 		// SER515 #3: There are multiple problems here, ranging from input data validation
 		// to data in the file matching what is in the color map to how exceptions are
 		// handled. Improve the code to handle these 3 problems.
-		try {
-			FileReader bridge = new FileReader(fname);
-			StreamTokenizer	tokens = new StreamTokenizer(bridge);
+		try (BufferedReader reader = new BufferedReader(new FileReader(fname))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split(",");
 
-			while (tokens.nextToken() != StreamTokenizer.TT_EOF) {
-				int number = (int) tokens.nval;
-				tokens.nextToken();
-				String label = tokens.sval;
-				tokens.nextToken();
-				Color color = (Color) colorMap.get(tokens.sval);
+				if (parts.length != 3) {
+					System.err.println("Invalid data format: " + line);
+					continue;
+				}
 
-				data.addElement(new Integer(number));
-				labels.addElement(label);
-				colors.addElement(color);
+				try {
+					int number = Integer.parseInt(parts[0].trim());
+					String label = parts[1].trim();
+					String colorName = parts[2].trim().toLowerCase();
+
+					Color color = colorMap.get(colorName);
+					if (color == null) {
+						System.err.println("Unknown color: " + colorName);
+						continue;
+					}
+
+					data.add(number);
+					labels.add(label);
+					colors.add(color);
+				} catch (NumberFormatException e) {
+					System.err.println("Invalid number format in line: " + line);
+				}
 			}
+		} catch (IOException e) {
+			System.err.println("Error reading file: " + fname);
+			e.printStackTrace();
 		}
-		catch (Exception e) {e.printStackTrace();}
 	}
 
 	public BarChartFrame(String fname) {
@@ -134,4 +152,5 @@ class BarChartFrame extends Frame
 		chart.repaint();
 		setVisible(true);
 	}
+
 }
